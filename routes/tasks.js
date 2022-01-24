@@ -15,10 +15,43 @@ router.get('/', async (req, res, next) => {
     await pool.promise()
         .query('SELECT * FROM tasks')
         .then(([rows, fields]) => {
-            console.log(rows);
-            res.json(rows);
+            res.json({
+                tasks: {
+                    data: rows
+                }
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                tasks: {
+                    error: "Error getting tasks"
+                }
+            })
         });
 
 });
 
+
+router.get('/:id', async (req, res, next) => {
+    const id = req.params.id;
+
+    if (isNaN(req.params.id)) {
+        res.status(400).json({
+            task: {
+                error: 'Bad request'
+            }
+        });
+    } else {
+        res.json({
+            id: req.params.id
+        })
+    }
+
+    console.log(id);
+    res.json({
+        id: req.params.id
+    })
+});
+    
 module.exports = router;
