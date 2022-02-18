@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../database');
+const nunjucks = require('nunjucks')
+
+nunjucks.configure('views', {
+  autoescape: true,
+  express: app
+});
 
 /* 
     BASE URL / tasks
@@ -15,10 +21,10 @@ router.get('/', async (req, res, next) => {
     await pool.promise()
         .query('SELECT * FROM tasks')
         .then(([rows, fields]) => {
-            res.render('tasks.njk', {
-                tasks: rows,
-                title: 'Tasks',
-                layout: 'layout.njk'
+            res.json({
+                tasks: {
+                    data: rows
+                }
             });
         })
         .catch(err => {
@@ -105,15 +111,5 @@ router.get('/', async (req, res, next) => {
         })
     });
 });
-
-router.get('/', async  function(req, res, next) {
-    let  data = {
-      message: 'Hello world!',
-      layout:  'layout.njk',
-      title: 'Nunjucks example'
-    }
-  
-    res.render('index.njk', data)
-  })
 
 module.exports = router;
