@@ -74,13 +74,21 @@ router.get('/:id/delete', async (req, res, next) => {
     res.json(`deleting task ${id}`);
     await pool.promise()
         .query('DELETE FROM tasks WHERE id = ?', [id])
-        .then(([rows, fields]) => {
-            res.json({
-                task: {
-                    data: rows
-                }
-            });
+        .then(([response]) => {
+            if (response[0].affectedRows == 1) {
+                res.redirect('/tasks');
+            } else {
+                res.status(400).redirect('/tasks');
+            }
         })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                tasks: {
+                    error: "Error getting tasks"
+                }
+            })
+        });
     }
 })
 
