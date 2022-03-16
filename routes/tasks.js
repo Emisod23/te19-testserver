@@ -114,6 +114,20 @@ router.get('/', async (req, res, next) => {
     });
 });
 
+router.post('/:id/complete', async (req, res, next) => {
+    const id = req.params.id;
+
+    await pool
+    .promise()
+    .query('UPDATE tasks SET completed = !completed WHERE id = ?', [id])
+    .then(response => {
+        console.log(response);
+    })
+    .catch(error => {
+        console.log(error);
+    });
+})
+
 router.get('/', async  function(req, res, next) {
     let  data = {
       message: 'Hello world!',
